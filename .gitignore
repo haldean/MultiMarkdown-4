@@ -2,6 +2,7 @@
 multimarkdown
 parser.c
 *.o
+*.so
 enumMap.txt
 speed*.txt
 

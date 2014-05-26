@@ -7,6 +7,7 @@
 CFLAGS ?= -Wall -g -O3 -include GLibFacade.h
 PROGRAM = multimarkdown
 VERSION = 4.5.3
+LIB = libmmd.so
 
 OBJS= multimarkdown.o parse_utilities.o parser.o GLibFacade.o writer.o text.o html.o latex.o memoir.o beamer.o lyx.o lyxbeamer.o opml.o odf.o critic.o rng.o rtf.o transclude.o
 
@@ -22,6 +23,14 @@ GREG= greg/greg
 
 ALL : $(PROGRAM) enumMap.txt
 
+lib: CFLAGS += -fpic
+lib: $(LIB)
+
+lib-install: lib
+	cp $(LIB) /usr/lib/
+	chmod 0755 /usr/lib/$(LIB)
+	ldconfig
+
 %.o : %.c parser.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 
@@ -33,6 +42,9 @@ $(GREG): greg
 
 $(PROGRAM) : $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS)
+
+$(LIB) : $(OBJS)
+	$(CC) $(CFLAGS) -shared -o $@ $(OBJS)
 
 install: $(PROGRAM)
 	install -m 0755 multimarkdown $(prefix)/bin
